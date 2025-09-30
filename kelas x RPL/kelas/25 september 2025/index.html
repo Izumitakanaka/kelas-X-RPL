@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar css</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .box{
+           background-color: red;
+           position: bsolute;
+           top: 300px;
+
+        }
+        .lebar{
+            width: 100px;
+        }
+        .tinggi{
+            height: 100px;
+        }
+        .box-1{
+            background-color: yellow;
+             position: absolute;
+           top: 80px;
+
+        }
+        .box-2{
+            background-color: green;
+             position: absolute;
+           top: 50px;
+            left: 220px;
+        }
+        .box-3{
+            background-color: aqua;
+             position: absolute;
+           top: 50px;
+           left: 400px;
+        }
+        .batas-atas{
+            margin-top: 30px;
+        }
+        .batas-bawah{
+            margin-bottom: 30px;
+        }
+        .batas-dalam-atas{
+            padding-top: 30px;
+        }
+        .batas-dalam-bawah{
+            padding-bottom: 30px;
+        }
+        .batas-kanan{
+           paddingy-right: 30px;
+        }
+        .batas-dalam-kiri{
+            padding-left: 30px;
+        }
+        .batas-dalam-kanan{
+            padding-right: 30px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="rumah">
+        <div class="identitas" style="background-color: aquamarine;">  identitas 
+            <ol>
+                <li>Nama : M. Fatchurrahman. H</li>
+                <li>Kelas : x rpl</li>
+                <li>Absen : 24</li>
+
+            </ol> 
+         </div>
+         <div class="pendidikan huruf" style="background-color: darkcyan;"> riwayat pendidikan
+            <ol>
+                <li>Sekolah Dasar : Lulus dari MI Hasyim Asy' Ari</li>
+                <li>Sekolah Menengah : Lulus dari Mts Nu Durungbedug</li>
+            </ol>
+        </div>
+        <div class="kompetensi huruf jarak" style="background-color: royalblue;">  kompetensi 
+            <ol>
+                <li>softskill</li>
+                <ul>
+                     <li>pantang menyerah</li>
+                     <li>like analyze</li>
+                </ul>
+            </ol>
+        </div>
+    </div>
+    <div class="box batas-dalam-kiri batas-dalam-atas batas-dalam-bawah batas-dalam-kanan">
+        <div class="box-1 lebar batas-dalam-atas batas-dalam-kiri batas-dalam-kanan batas-dalam-bawah">
+         box-1
+        </div>
+         <div class="box-2 lebar batas-atas batas-dalam-atas batas-dalam-kiri batas-dalam-kanan batas-dalam-bawah">
+         box-2
+        </div>
+         <div class="box-3 lebar batas-atas batas-dalam-atas batas-dalam-kiri batas-dalam-kanan batas-dalam-bawah">
+         box-3
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papan Catur</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .floating-window {
+            position: absolute;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            cursor: move;
+            z-index: 1000;
+        }
+        
+        .window-header {
+            background: #8B4513;
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .close { background: #ff5f57; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #28ca42; }
+        
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+        
+        .chess-square {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            transition: all 0.2s ease;
+        }
+        
+        .light { background-color: #F0D9B5; }
+        .dark { background-color: #B58863; }
+        
+        .chess-square:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .coordinates {
+            position: absolute;
+            font-size: 10px;
+            color: rgba(0,0,0,0.6);
+            pointer-events: none;
+        }
+        
+        .file-coord { bottom: 2px; right: 5px; }
+        .rank-coord { top: 2px; left: 5px; }
+        
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-window" id="chessWindow" style="top: 100px; left: 100px;">
+        <div class="window-header" id="windowHeader">
+            Papan Catur 
+            <div class="window-controls">
+                <div class="control-btn minimize"></div>
+                <div class="control-btn maximize"></div>
+                <div class="control-btn close" onclick="this.closest('.floating-window').style.display='none'"></div>
+            </div>
+        </div>
+        <div class="chess-board">
+            <!-- Baris 1 -->
+            <div class="chess-square light">
+                <span></span>
+                <div class="coordinates rank-coord">3</div>
+                <div class="coordinates file-coord">a</div>
+            </div>
+            <div class="chess-square dark">
+                <span></span>
+                <div class="coordinates rank-coord">3</div>
+                <div class="coordinates file-coord">b</div>
+            </div>
+            <div class="chess-square light">
+                <span></span>
+                <div class="coordinates rank-coord">3</div>
+                <div class="coordinates file-coord">c</div>
+            </div>
+            
+            <!-- Baris 2 -->
+            <div class="chess-square dark">
+                <span></span>
+                <div class="coordinates rank-coord">2</div>
+                <div class="coordinates file-coord">a</div>
+            </div>
+            <div class="chess-square light">
+                <span></span>
+                <div class="coordinates rank-coord">2</div>
+                <div class="coordinates file-coord">b</div>
+            </div>
+            <div class="chess-square dark">
+                <span></span>
+                <div class="coordinates rank-coord">2</div>
+                <div class="coordinates file-coord">c</div>
+            </div>
+            
+            <!-- Baris 3 -->
+            <div class="chess-square light">
+                <span></span>
+                <div class="coordinates rank-coord">1</div>
+                <div class="coordinates file-coord">a</div>
+            </div>
+            <div class="chess-square dark">
+                <span></span>
+                <div class="coordinates rank-coord">1</div>
+                <div class="coordinates file-coord">b</div>
+            </div>
+            <div class="chess-square light">
+                <span></span>
+                <div class="coordinates rank-coord">1</div>
+                <div class="coordinates file-coord">c</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        Klik dan tarik header untuk memindahkan papan catur • Klik tombol merah untuk menutup
+    </div>
+
+    <script>
+        // Fungsi untuk membuat window dapat dipindah
+        function makeDraggable(element) {
+            const header = element.querySelector('.window-header');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            header.addEventListener("mousedown", dragStart);
+            document.addEventListener("mousemove", drag);
+            document.addEventListener("mouseup", dragEnd);
+            
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+                
+                if (e.target === header) {
+                    isDragging = true;
+                }
+            }
+            
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    
+                    setTranslate(currentX, currentY, element);
+                }
+            }
+            
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+            }
+            
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+            }
+        }
+        
+        // Terapkan fungsi draggable ke window catur
+        const chessWindow = document.getElementById('chessWindow');
+        makeDraggable(chessWindow);
+        
+        // Animasi saat membuka
+        chessWindow.style.opacity = '0';
+        chessWindow.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+            chessWindow.style.transition = 'all 0.3s ease';
+            chessWindow.style.opacity = '1';
+            chessWindow.style.transform = 'scale(1)';
+        }, 100);
+    </script>
+</body>
+</html>
